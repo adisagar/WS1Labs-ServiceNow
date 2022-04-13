@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_page">
+    <sys_ui_page action="INSERT_OR_UPDATE">
+        <category>general</category>
+        <client_script><![CDATA[/**
+OnLoad page that updates the contents of
+Configure Connections page, where the user
+can test the credentials used to authenticate
+WS1 Console.
+**/
+onLoad();
+
+function onLoad() {
+	var oauth_result;
+	var basic_result;
+	var oauth_entity;
+	var basic_auth_credentials;
+	var tenant_info;
+    var basicactive = false;
+    var oauthactive = false;
+
+
+    var http_request = new GlideAjax('x_vmw_ws1uem.WS1GetAuthCredentials');
+    http_request.addParam('sysparm_name', 'get_credentials');
+    // http_request.addParam('sysparm_credential_name', "Workspace ONE UEM ITSM OAuth Credentials");
+
+    http_request.getXML(function parse_response(response) {
+        var result = response.responseXML.documentElement.getAttribute("answer");
+        result = JSON.parse(result);
+		
+		oauth_result = result.oauth;
+		basic_result = result.basic;
+		oauth_entity = result.oauth_entity;
+		basic_auth_credentials = result.basic_auth_credentials;
+		tenant_info = result.tenant_code;
+		
+        $("input_ws1_hostid").value = oauth_result.hostid;
+
+        if (oauth_result.hostid != "") {
+            hostid = oauth_result.hostid;
+            oauthactive = (oauth_result.active === "true");
+        }
+		
+		$("input_ws1_basic_hostid").value = basic_result.hostid;
+		
+		if (basic_result.hostid != "") {
+			hostid = basic_result.hostid;
+			basicactive = (basic_result.active === "true");
+		}
+		
+		if (oauthactive == true) {
+			//set the value in the fields to existing values
+			$("input_ws1_clientid").value = oauth_entity.clientid;
+			$("input_ws1_clientsecret").value = oauth_entity.clientsecret;
+			$("input_ws1_tokenurl").value = oauth_entity.tokenurl;
+
+			$("div_ws1_oauth").hidden = false;
+			$("div_ws1_basic").hidden = true;
+			$("div_ws1_error").hidden = true;
+		
+    } else if (basicactive == true) {
+		$("input_ws1_username").value = basic_auth_credentials.user_name;
+		$("input_ws1_clientpassword").value = basic_auth_credentials.user_secret;
+
+        $("input_ws1_tenant_code").value = tenant_info.tenant_code;
+
+        $("div_ws1_oauth").hidden = true;
+        $("div_ws1_basic").hidden = false;
+        $("div_ws1_error").hidden = true;
+		
+    } else {
+        $("div_ws1_error").hidden = false;
+        $("div_ws1_oauth").hidden = true;
+        $("div_ws1_basic").hidden = true;
+    }
+    });
+
+    // set the inputs based on auth type 
+}
+
+// function to get the values from the existing oauth record
+// the aim is to collect these in the HTML and update them here
+function saveBasicValues() {
+    gel("runprocessingscript").value = "setbasicvalues";
+
+    var new_install_script = new GlideAjax('x_vmw_ws1uem.WS1SetActionDefaults');
+    new_install_script.addParam('sysparm_name', 'new_install');
+
+    new_install_script.getXML(function parse_response(response) {
+        var result = response.responseXML.documentElement.getAttribute('answer');
+
+        if (result == true) {
+            jslog('Running Fix script after installation');
+        }
+    });
+}
+
+
+// function to get the values from the existing basic record
+// the aim is to collect these in the HTML and update them here
+function saveValues() {
+    gel("runprocessingscript").value = "setoauthvalues";
+
+    var new_install_script = new GlideAjax('x_vmw_ws1uem.WS1SetActionDefaults');
+    new_install_script.addParam('sysparm_name', 'new_install');
+
+    new_install_script.getXML(function parse_response(response) {
+        var result = response.responseXML.documentElement.getAttribute('answer');
+
+        if (result == true) {
+            jslog('Running Fix script after installation');
+        }
+    });
+}
+
+function update_uem_console_url() {
+    var http_request = new GlideAjax('x_vmw_ws1uem.WS1UpdateUEMConsoleURL');
+	http_request.addParam('sysparm_name', 'update_console_url');
+
+    http_request.getXML(function parse_response(response) {
+        var result = response.responseXML.documentElement.getAttribute("answer");
+	});
+}
+
+// test the details are correct by getting the OAuth token
+function testoauth() {
+    var http_request = new GlideAjax('x_vmw_ws1uem.WS1GetAuthCredentials');
+	http_request.addParam('sysparm_name', 'get_credentials_2_0');
+
+    http_request.getXML(function parse_response(response) {
+        var result = response.responseXML.documentElement.getAttribute("answer");
+        result = JSON.parse(result);
+        window.open(result.oauth_initiator_url, '', 'height=200,width=800'); // pops up window
+    });
+}
+
+function testConnection() {
+	update_uem_console_url();
+    gel("runprocessingscript").value = "testconnection";
+}]]></client_script>
+        <description>Configure the connection to Workspace ONE UEM</description>
+        <direct>false</direct>
+        <endpoint>x_vmw_ws1uem_WS1UEMConfigureConnection.do</endpoint>
+        <html><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
+<j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null">
+    <g:ui_form>
+		
+	<style>
+		.content {
+			display: flex;
+		}		
+		
+		.right-border {
+			border-right: 1px solid lightgrey;
+			padding-right: 3em;
+		}
+		
+		.left-panel {
+			margin-left: 10px;
+			max-width: 40%;
+		}
+		
+		.right-panel {
+			margin-left: 3em;
+		}
+		
+		.heading {
+			text-align: center;
+		}
+		
+		.input-label {
+			font-size: medium;
+		}
+		
+		.input-wrapper {
+			margin-bottom: 30px;
+		}
+		
+		.button-wrapper {
+			margin-bottom: 15px;
+		}
+		
+		.test-message-wrapper {
+			margin-bottom: 10px;
+			max-width: 35em;
+		}
+		
+		.test-connection-heading {
+			margin-bottom: 5px;
+		}
+		
+		.auth-method-description {
+			margin-bottom: 20px;
+		}
+		
+		.auth-method-section {
+			margin-top: 20px;
+		}
+				
+		.error-method-section {
+			margin: 20px 0;
+		}
+	</style>
+		
+	<input type="hidden" id="runprocessingscript" name="runprocessingscript" value=""/>
+		
+	<div class="content">
+		
+	<div id="credentials-panel" class="left-panel right-border">	
+		<div>
+			<div class="heading input-label">
+				<strong>${gs.getMessage('WS1UEMAuthMethod')}</strong>
+			</div>
+		</div>	
+		
+		<div id="div_ws1_error" class="error-method-section" hidden="true">
+			<div class="input-label error-method-description">
+				${gs.getMessage('WS1UEMAuthError')}
+			</div>
+		</div>	
+		
+		<div id="div_ws1_oauth" class="auth-method-section" hidden="true">
+			<div class="input-label auth-method-description">
+				<strong>${gs.getMessage('WS1UEMOathDescription')}</strong>
+			</div>
+			
+			<div id="div_ws1_hostid" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMHostnameAPI')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_hostid_input" >
+				<input
+					   type="text"
+					   name="input_ws1_hostid"
+					   id="input_ws1_hostid"
+					   table="http_connection"
+					   field="host"
+					   query="active=true"
+					   minlength="1"
+					   size="55"
+					   disabled="true"/>	
+			</div>
+
+			<div id="div_ws1_clientid" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMClientId')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_clientid_input" >
+				<input
+					type="text"
+					name="input_ws1_clientid"
+					id="input_ws1_clientid"
+					table="oauth_table"
+					field="client_id"
+					query="active=true"
+					minlength="1"
+					size="55"
+					disabled="true"/>	
+			</div>
+
+			<div id="div_ws1_clientsecret" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMClientSecret')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_clientsecret_input" >
+				<input
+					type="password"
+					name="input_ws1_clientsecret"
+					id="input_ws1_clientsecret"
+					table="oauth_table"
+					field="client_secret"
+					query="active=true"
+					minlength="1"
+					size="55"
+					disabled="true"/>
+			</div>
+
+			<div id="div_ws1_tokenurl" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMTokenURL')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_token_input_input" >
+				<input
+					type="text"
+					name="input_ws1_tokenurl"
+					id="input_ws1_tokenurl"
+					table="oauth_table"
+					field="token_url"
+					query="active=true"
+					minlength="1"
+					size="55"
+					disabled="true"/>		
+			</div>
+
+			<div class="button-wrapper" id="div_ws1_save" >
+				<g:form_label>
+					<button type="submit" hidden="true" onclick="saveValues()">
+						${gs.getMessage('save')}
+					</button>
+				</g:form_label>
+			</div>
+			<div class="button-wrapper" id="div_ws1_test" >
+				<g:form_label>
+					<button type="button" onclick="testoauth()">
+						${gs.getMessage('WS1UEMGetToken')}
+					</button>
+				</g:form_label>
+			</div>
+		</div>
+		
+		
+		<div id="div_ws1_basic" class="auth-method-section" hidden="true">
+			<div class="input-label auth-method-description">
+				<strong>${gs.getMessage('WS1UEMBasicAuthDescription')}</strong>
+			</div>
+			
+			<div id="div_ws1_basic_hostid" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMHostnameAPI')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_basic_hostid_input" >
+				<input
+					type="text"
+					name="input_ws1_basic_hostid"
+					id="input_ws1_basic_hostid"
+					table="http_connection"
+					field="host"
+					query="active=true"
+					minlength="1"
+					size="55"
+					disabled="true"/>	
+			</div>
+
+			<div id="div_ws1_username" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMUsername')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_username_input" >
+				<input
+					type="text"
+					name="input_ws1_username"
+					id="input_ws1_username"
+					table="oauth_table"
+					field="username"
+					query="active=true"
+					minlength="1"
+					size="55"
+					disabled="true"/>	
+			</div>
+
+			<div id="div_ws1_password" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMPassword')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_password_input" >
+				<input
+					type="password"
+					name="input_ws1_clientpassword"
+					id="input_ws1_clientpassword"
+					table="oauth_table"
+					field="password"
+					query="active=true"
+					minlength="1"
+					size="55"
+					disabled="true"/>
+			</div>
+
+			<div id="div_ws1_tenant_code" >
+				<g:form_label>
+					<span class="input-label">${gs.getMessage('WS1UEMTenantCode')}</span>
+				</g:form_label>
+			</div>
+			<div class="input-wrapper" id="div_ws1_tenant_code_input" >
+				<input
+					type="text"
+					name="input_ws1_tenant_code"
+					id="input_ws1_tenant_code"
+					table="oauth_table"
+					field="tenant_code"
+					query="active=true"
+					minlength="1"
+					size="55"
+					disabled="true"/>		
+			</div>
+
+			<div class="button-wrapper" hidden="true" id="div_ws1_basic_save" >
+				<g:form_label>
+					<button type="submit" onclick="saveBasicValues()">
+						${gs.getMessage('save')}
+					</button>
+				</g:form_label>
+			</div>
+		</div>
+	</div>
+		
+	<div id="test-panel" class="right-panel">
+		
+		<div>
+			<div class="test-connection-heading">
+				<span class="input-label">${gs.getMessage('WS1UEMITSMConnector')}</span>
+			</div>
+
+			<div class="test-message-wrapper">
+				<g:form_label>
+					${gs.getMessage('WS1UEMTestMessage')}
+				</g:form_label>
+			</div>	
+
+			<div id="div_ws1_testconnection" >
+				<g:form_label>
+					<button type="submit" id="div_ws1_testconnection_button" onclick="testConnection()">
+						${gs.getMessage('WS1UEMTestButton')}
+					</button>
+				</g:form_label>
+			</div>
+		</div>
+	</div>
+
+	</div>
+
+	</g:ui_form>
+</j:jelly>]]></html>
+        <name>WS1UEMConfigureConnection</name>
+        <processing_script><![CDATA[if (runprocessingscript == "testconnection") {
+
+    try {
+        // Execute Synchronously: Run in foreground. Code snippet has access to outputs.
+        var result = sn_fd.FlowAPI.getRunner().action('x_vmw_ws1uem.ws1uemtennantcode').inForeground().run();
+        var outputs = result.getOutputs();
+
+        // Get Outputs:
+        // Note: outputs can only be retrieved when executing synchronously.
+        var ws1tenantcode = outputs['ws1tenantcode']; // String
+        var ws1tenantname = outputs['ws1tenantname']; // String
+
+        var inputs = {};
+        inputs['tenantcode'] = ws1tenantcode; // String 
+        inputs['ws1tentantname'] = ws1tenantname; // String 
+
+        // Execute Synchronously: Run in foreground. Code snippet has access to outputs.
+        result = sn_fd.FlowAPI.getRunner().action('x_vmw_ws1uem.ws1uemversion').inForeground().withInputs(inputs).run();
+        outputs = result.getOutputs();
+
+        // Get Outputs:
+        // Note: outputs can only be retrieved when executing synchronously.
+        var variable = outputs['variable']; // String
+        var status = outputs['status']; // String
+        var response = outputs['response']; // String
+        var ws1productversion = outputs['ws1productversion']; // String
+
+        if (status == "200") {
+            gs.addInfoMessage(gs.getMessage('WS1UEMConnectionVerfied') + ws1productversion);
+        } else if (status == "401") {
+            gs.addInfoMessage(gs.getMessage('WS1UEMConnectionFailedAuthenticationError'));
+        } else {
+            gs.addInfoMessage(gs.getMessage('WS1UEMConnectionFailed'));
+        }
+
+
+    } catch (ex) {
+        var message = ex.getMessage();
+        gs.addInfoMessage(gs.getMessage('WS1UEMConnectionFailed'));
+    }
+}
+
+
+if (runprocessingscript == "setoauthvalues") {
+
+    var clientid = input_ws1_clientid;
+    var clientsecret = input_ws1_clientsecret;
+    var tokenurl = input_ws1_tokenurl;
+
+    // get the hostname
+    http_table = new GlideRecordSecure('http_connection');
+    http_table.addQuery('name', "Workspace ONE UEM ITSM OAuth Credentials");
+    http_table.query();
+    if (http_table.next()) {
+        var hostid = http_table.host;
+    }
+	
+    // update the WS1 UEM tokenURL, clientID and Client secret if they have changed
+    var oauth_table = new GlideRecordSecure('oauth_entity');
+    oauth_table.addQuery('name', 'Workspace ONE UEM ITSM OAuth Provider');
+    oauth_table.query();
+    if (oauth_table.next()) {
+        var requiresupdate = false;
+
+        if (oauth_table.client_id != clientid) {
+            oauth_table.client_id = clientid;
+            requiresupdate = true;
+        }
+
+        if (clientsecret != "********************") {
+            oauth_table.client_secret = clientsecret;
+            requiresupdate = true;
+        }
+
+        if (oauth_table.token_url != tokenurl) {
+            oauth_table.token_url = tokenurl;
+            requiresupdate = true;
+        }
+
+        if (requiresupdate) {
+            oauth_table.update();
+        } 
+    }
+}
+
+
+if (runprocessingscript == "setbasicvalues") {
+
+    ws1username = input_ws1_username;
+    ws1password = input_ws1_clientpassword;
+    ws1tenantcode = input_ws1_tenant_code;
+
+
+    // get the hostname
+    http_table = new GlideRecordSecure('http_connection');
+    http_table.addQuery('name', "Workspace ONE UEM ITSM Basic Credentials");
+    http_table.query();
+    if (http_table.next()) {
+        hostid = http_table.host;
+    }
+
+    // update the WS1 UEM token url if needed
+	var action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
+	action_table.addQuery('name', "WS1UEMTenantCode");
+    action_table.query();
+    action_table.next();
+    if (action_table.value != ws1tenantcode) {
+        action_table.value = ws1tenantcode;
+        action_table.update();
+    }
+
+    // update the WS1 UEM username and password if needed
+    var basic_table = new GlideRecordSecure('basic_auth_credentials');
+    basic_table.addQuery('name', 'Workspace ONE UEM ITSM Basic Credentials');
+    basic_table.query();
+    if (basic_table.next()) {
+        requiresupdate = false;
+        if (basic_table.user_name != ws1username) {
+            basic_table.user_name = ws1username;
+            requiresupdate = true;
+        }
+
+        if (ws1password != "********************") {
+            basic_table.password = ws1password;
+            requiresupdate = true;
+        }
+        if (requiresupdate) {
+            basic_table.update();
+        }
+    }
+}]]></processing_script>
+        <sys_class_name>sys_ui_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-09-01 16:32:04</sys_created_on>
+        <sys_id>8205db0e1b1eb410a76c0dc0604bcb48</sys_id>
+        <sys_mod_count>266</sys_mod_count>
+        <sys_name>WS1UEMConfigureConnection</sys_name>
+        <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
+        <sys_update_name>sys_ui_page_8205db0e1b1eb410a76c0dc0604bcb48</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-01-07 21:43:01</sys_updated_on>
+    </sys_ui_page>
+</record_update>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_vmw_ws1uem.WS1SetActionDefaults</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description/>
+        <name>WS1SetActionDefaults</name>
+        <script><![CDATA[var WS1SetActionDefaults = Class.create();
+WS1SetActionDefaults.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+   new_install:function() {
+    var main_fields;
+    var main_keys;
+    var delete_mapping_table;
+    var i;
+    var j;
+    var key;
+    var field_value;
+    var record;
+    var gr_mapping_table;
+
+    var records = "";
+    var action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
+    action_table.addQuery('name', "WS1UEMActionOSJSONData");
+    action_table.query();
+    if (action_table.next()) {
+        records = action_table.value;
+    }
+	
+	records = JSON.parse(records);
+
+	main_keys = Object.keys(records.records[0]);
+    delete_mapping_table = new GlideRecordSecure("x_vmw_ws1uem_ws1_action_os_mapping");
+    delete_mapping_table.query();
+    delete_mapping_table.deleteMultiple();
+
+    for (i = 0; i < records.records.length; i+=1) {
+
+    record = records.records[i];
+    gr_mapping_table = new GlideRecordSecure("x_vmw_ws1uem_ws1_action_os_mapping");
+        gr_mapping_table.initialize();
+
+        for (j = 0; j < main_keys.length; j+=1) {
+            key = main_keys[j];
+            field_value = record[key];
+            if (field_value !== "") {
+                gr_mapping_table.setValue(key, field_value);
+            }
+        }
+
+        gr_mapping_table.insert();
+    }
+
+	main_fields = {};
+	for (i = 0; i < main_keys.length; i+=1) {
+		main_fields[main_keys[i]] = false;
+	}
+    return true;
+   } ,
+   _privateFunction: function() { // this function is not client callable
+    }
+ });]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-09-17 20:06:35</sys_created_on>
+        <sys_id>f58fd2171b663450a76c0dc0604bcbfe</sys_id>
+        <sys_mod_count>37</sys_mod_count>
+        <sys_name>WS1SetActionDefaults</sys_name>
+        <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
+        <sys_update_name>sys_script_include_f58fd2171b663450a76c0dc0604bcbfe</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-11-19 18:12:42</sys_updated_on>
+    </sys_script_include>
+</record_update>
