@@ -16,20 +16,23 @@ opens, setting the default actions available to the user
 and obtaining UEM configurations for further customizability.
 **/
 function onLoad() {
-
-    /**
-    Obtain the User's authentication as either a standard or advanced
-    **/
-
     var IN_PROGRESS_STATE = 2;
-    var isStandard = g_user.hasRole("x_vmw_ws1uem.ws1uemstandard");
     var ga_version;
     var version;
     var currentstate;
     var sid;
     var ga;
-    var isAdvanced;
     var configItem;
+    var hasDeviceWipeRole;
+    var hasEnterpriseWipeRole;
+    var hasLockDeviceRole;
+    var hasRemoteAssistRole;
+    var hasSendMessageRole;
+    var hasSyncDeviceRole;
+    var hasDeviceLogsRole;
+    var hasChangePasscodeRole;
+    var hasSoftReset;
+	var showUEMTab = false;
 
     g_form.setValue("x_vmw_ws1uem_ws1action", "");
 
@@ -39,8 +42,25 @@ function onLoad() {
 
     ga_version.getXML(function parse_response(response) {
         version = response.responseXML.documentElement.getAttribute('answer');
+		
+        // Get the users UEM roles
+        hasDeviceWipeRole = g_user.hasRole("x_vmw_ws1uem.ws1uemdevicewipe");
+        hasEnterpriseWipeRole = g_user.hasRole("x_vmw_ws1uem.ws1uementerprisewipe");
+        hasLockDeviceRole = g_user.hasRole("x_vmw_ws1uem.ws1uemlockdevice");
+        hasRemoteAssistRole = g_user.hasRole("x_vmw_ws1uem.ws1uemremoteassist");
+        hasSendMessageRole = g_user.hasRole("x_vmw_ws1uem.ws1uemsendmessage");
+        hasSyncDeviceRole = g_user.hasRole("x_vmw_ws1uem.ws1uemsyncdevice");
+        hasDeviceLogsRole = g_user.hasRole("x_vmw_ws1uem.ws1uemdevicelogs");
+        hasChangePasscodeRole = g_user.hasRole("x_vmw_ws1uem.ws1uemchangepasscode");
+        hasSoftReset = g_user.hasRole("x_vmw_ws1uem.ws1uemsoftreset");
 
-        if (!isStandard || !version) {
+
+		// Check if the WS1 UEM tab should be displayed based upon the user having a valid WS1 UEM role
+		if (hasDeviceWipeRole || hasEnterpriseWipeRole || hasLockDeviceRole || hasRemoteAssistRole || hasSendMessageRole || hasSyncDeviceRole || hasDeviceLogsRole || hasDeviceLogsRole || hasChangePasscodeRole || hasSoftReset) {
+			showUEMTab = true;
+		}
+		
+        if (!showUEMTab || !version) {
             g_form.setSectionDisplay("workspace_oneuem", false);
         } else {
             currentstate = g_form.getValue("state");
@@ -49,32 +69,40 @@ function onLoad() {
                 ga = new GlideAjax("x_vmw_ws1uem.WS1GetActionFromOS");
                 ga.addParam("sysparm_name", "get_action");
                 ga.addParam("sysparm_sid", sid);
-				
-                ga.getXML(parse_os_name);
 
-                // The user has the standard WS1 UEM rights so check if advanced
-                // and remove destructive actions from list if not
-                isAdvanced = g_user.hasRole("x_vmw_ws1uem.ws1uemadvanced");
-				
-                if (!isAdvanced) {
-					jslog("Removing advanced user actions " + "device wipe,enterprise wipe");
-                    g_form.removeOption("x_vmw_ws1uem_ws1action", "devicewipe");
-                    g_form.removeOption("x_vmw_ws1uem_ws1action", "enterprisewipe");
-                }
+                ga.getXML(parse_os_name);
 
                 configItem = g_form.getValue("cmdb_ci");
                 if (!configItem) {
-					jslog("Removing user actions because of missing configuration item");
+                    jslog("Removing user actions because of missing configuration item");
+                }
+                // Remove any actions not assigned to a user or that don't have a configuration item
+                if (!hasDeviceWipeRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "devicewipe");
+                }
+                if (!hasEnterpriseWipeRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "enterprisewipe");
+                }
+                if (!hasLockDeviceRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "lock");
+                }
+                if (!hasRemoteAssistRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "assist");
+                }
+                if (!hasSendMessageRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "message");
+                }
+                if (!hasSyncDeviceRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "syncdevice");
+                }
+                if (!hasDeviceLogsRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "devicelogs");
+                }
+                if (!hasChangePasscodeRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "changepasscode");
+                }
+                if (!hasSoftReset || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "softreset");
-
                 }
             }
         }
@@ -90,7 +118,7 @@ function onLoad() {
         var key;
         response = response.responseXML.documentElement.getAttribute("answer");
         jslog("Queried response for Actions for OS = " + response);
-		
+
         $("incident.x_vmw_ws1uem_ws1_actions_response").value = response;
 
         response = JSON.parse(response);
@@ -109,7 +137,7 @@ function onLoad() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>0a4957ce1b1eb410a76c0dc0604bcb38</sys_id>
-        <sys_mod_count>123</sys_mod_count>
+        <sys_mod_count>132</sys_mod_count>
         <sys_name>WS1UEMAction</sys_name>
         <sys_overrides/>
         <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
@@ -117,7 +145,7 @@ function onLoad() {
         <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
         <sys_update_name>sys_script_client_0a4957ce1b1eb410a76c0dc0604bcb38</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-10-26 20:04:31</sys_updated_on>
+        <sys_updated_on>2022-04-21 05:14:04</sys_updated_on>
         <table>incident</table>
         <type>onLoad</type>
         <ui_type>0</ui_type>
