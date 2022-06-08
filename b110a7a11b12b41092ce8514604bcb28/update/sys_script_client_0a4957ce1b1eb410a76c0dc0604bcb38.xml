@@ -31,8 +31,9 @@ function onLoad() {
     var hasSyncDeviceRole;
     var hasDeviceLogsRole;
     var hasChangePasscodeRole;
-    var hasSoftReset;
-	var showUEMTab = false;
+    var hasSoftResetRole;
+	var hasUEMUserRole;
+    var showUEMTab = false;
 
     g_form.setValue("x_vmw_ws1uem_ws1action", "");
 
@@ -42,25 +43,11 @@ function onLoad() {
 
     ga_version.getXML(function parse_response(response) {
         version = response.responseXML.documentElement.getAttribute('answer');
-		
-        // Get the users UEM roles
-        hasDeviceWipeRole = g_user.hasRole("x_vmw_ws1uem.ws1uemdevicewipe");
-        hasEnterpriseWipeRole = g_user.hasRole("x_vmw_ws1uem.ws1uementerprisewipe");
-        hasLockDeviceRole = g_user.hasRole("x_vmw_ws1uem.ws1uemlockdevice");
-        hasRemoteAssistRole = g_user.hasRole("x_vmw_ws1uem.ws1uemremoteassist");
-        hasSendMessageRole = g_user.hasRole("x_vmw_ws1uem.ws1uemsendmessage");
-        hasSyncDeviceRole = g_user.hasRole("x_vmw_ws1uem.ws1uemsyncdevice");
-        hasDeviceLogsRole = g_user.hasRole("x_vmw_ws1uem.ws1uemdevicelogs");
-        hasChangePasscodeRole = g_user.hasRole("x_vmw_ws1uem.ws1uemchangepasscode");
-        hasSoftReset = g_user.hasRole("x_vmw_ws1uem.ws1uemsoftreset");
 
-
-		// Check if the WS1 UEM tab should be displayed based upon the user having a valid WS1 UEM role
-		if (hasDeviceWipeRole || hasEnterpriseWipeRole || hasLockDeviceRole || hasRemoteAssistRole || hasSendMessageRole || hasSyncDeviceRole || hasDeviceLogsRole || hasDeviceLogsRole || hasChangePasscodeRole || hasSoftReset) {
-			showUEMTab = true;
-		}
+        hasUEMUserRole = g_user.hasRole("x_vmw_ws1uem.ws1uemuser");
 		
-        if (!showUEMTab || !version) {
+        // Check if the WS1 UEM tab should be displayed based upon the user having a valid WS1 UEM role		
+        if (!hasUEMUserRole || !version) {
             g_form.setSectionDisplay("workspace_oneuem", false);
         } else {
             currentstate = g_form.getValue("state");
@@ -76,6 +63,18 @@ function onLoad() {
                 if (!configItem) {
                     jslog("Removing user actions because of missing configuration item");
                 }
+				
+                // Get the user's UEM roles
+                hasDeviceWipeRole = g_user.hasRole("x_vmw_ws1uem.ws1uemdevicewipe");
+                hasEnterpriseWipeRole = g_user.hasRole("x_vmw_ws1uem.ws1uementerprisewipe");
+                hasLockDeviceRole = g_user.hasRole("x_vmw_ws1uem.ws1uemlockdevice");
+                hasRemoteAssistRole = g_user.hasRole("x_vmw_ws1uem.ws1uemremoteassist");
+                hasSendMessageRole = g_user.hasRole("x_vmw_ws1uem.ws1uemsendmessage");
+                hasSyncDeviceRole = g_user.hasRole("x_vmw_ws1uem.ws1uemsyncdevice");
+                hasDeviceLogsRole = g_user.hasRole("x_vmw_ws1uem.ws1uemdevicelogs");
+                hasChangePasscodeRole = g_user.hasRole("x_vmw_ws1uem.ws1uemchangepasscode");
+                hasSoftResetRole = g_user.hasRole("x_vmw_ws1uem.ws1uemsoftreset");
+
                 // Remove any actions not assigned to a user or that don't have a configuration item
                 if (!hasDeviceWipeRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "devicewipe");
@@ -101,7 +100,7 @@ function onLoad() {
                 if (!hasChangePasscodeRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "changepasscode");
                 }
-                if (!hasSoftReset || !configItem) {
+                if (!hasSoftResetRole || !configItem) {
                     g_form.removeOption("x_vmw_ws1uem_ws1action", "softreset");
                 }
             }
@@ -137,7 +136,7 @@ function onLoad() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>0a4957ce1b1eb410a76c0dc0604bcb38</sys_id>
-        <sys_mod_count>132</sys_mod_count>
+        <sys_mod_count>157</sys_mod_count>
         <sys_name>WS1UEMAction</sys_name>
         <sys_overrides/>
         <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
@@ -145,7 +144,7 @@ function onLoad() {
         <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
         <sys_update_name>sys_script_client_0a4957ce1b1eb410a76c0dc0604bcb38</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-04-21 05:14:04</sys_updated_on>
+        <sys_updated_on>2022-05-09 06:20:17</sys_updated_on>
         <table>incident</table>
         <type>onLoad</type>
         <ui_type>0</ui_type>
