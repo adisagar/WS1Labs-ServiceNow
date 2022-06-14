@@ -14,275 +14,275 @@ function onLoad() {
     action_table.addQuery('name', "WS1UEMAddNote");
     action_table.query();
     action_table.next();
-	
+
     // if installed get the state of our system parameter
     if (action_table.value == "true") {
         $("input_ws1_note").checked = true;
     } else {
         $("input_ws1_note").checked = false;
     }
-	
-	//get the system parameter whether to add a note 
+
+    //get the system parameter whether to add a note 
     action_table = new GlideRecord('x_vmw_ws1uem_ws1uemappconfig');
     action_table.addQuery('name', "WS1UEMEmailValidationCheck");
     action_table.query();
     action_table.next();
-	
+
     // if installed get the state of our system parameter
     if (action_table.value == "true") {
         $("input_ws1_email_val").checked = true;
     } else {
         $("input_ws1_email_val").checked = false;
     }
-	
-	action_table = new GlideRecord('x_vmw_ws1uem_ws1uemappconfig');
+
+    action_table = new GlideRecord('x_vmw_ws1uem_ws1uemappconfig');
     action_table.addQuery('name', "WS1UEMExceptionEmail");
+	action_table.orderBy('value');
     action_table.query();
+
+    var current_list = [];
+    for (var i = 0; i < action_table.rows.length; i++) {
+        action_table.next();
+        addEmailToExceptionTable(action_table.value);
+        current_list[i] = action_table.value;
+    }
 	
-	var current_list = [];
-	for (var i = 0; i < action_table.rows.length; i++) {
-		action_table.next();
-		addEmailToExceptionTable(action_table.value);
-		current_list[i] = action_table.value;
-	}
+    gel("jvar_new_email_list").value = JSON.stringify(current_list);
+
+    emailValidationCheckUpdate();
 	
-	gel("jvar_new_email_list").value = JSON.stringify(current_list);
-	
-	emailValidationCheckUpdate();
-	
-	$("new_email_address").on("change", function(e){
-	  console.log("Change fired!");
-	});
+	var control = g_form.getControl('new_email_address');
+	//Set its onkeyup method
+	control.onkeyup = onTextChanged;
+	$("add_email_address").disabled = true;
+	$("remove_email_address").disabled = true;
 }
 
 function onTextChanged() {
-	alert("?")
-	var emailInputValue = $("new_email_address");
-	if (emailInputValue.length > 0) {
-		$("add_email_address").disabled = true;
-	} else {
-		$("add_email_address").disabled = false;
-	}
+    var emailInputValue = $("new_email_address").value;
+	jslog("text change length = " + emailInputValue.length);
+	
+    if (emailInputValue.length > 0) {
+        $("add_email_address").disabled = false;
+		$("remove_email_address").disabled = false;
+    } else {
+        $("add_email_address").disabled = true;
+		$("remove_email_address").disabled = true;
+    }
 }
 
 function emailValidationCheckUpdate() {
-	var checkStatus = gel("input_ws1_email_val").checked;
-	
-	jslog("check status is " + checkStatus);
-	
-	if (checkStatus == true) {
-		gel("WS1UEMExceptionListSubtext").innerHTML = getMessage("WS1UEMEmailValidationIgnore");
-		$("email_exception_table").hidden = false;
-		$("section_title").hidden = false;
-		$("WS1UEMExceptionListSubtext").hidden = false;
-		$("new_email_address").hidden = false;
-		$("add_email_address").hidden = false;
-		$("remove_email_address").hidden = false;
-		
-	} else {
-		gel("WS1UEMExceptionListSubtext").innerHTML = getMessage("WS1UEMEmailValidationEnforce");
-		$("email_exception_table").hidden = true;
-		$("section_title").hidden = true;
-		$("WS1UEMExceptionListSubtext").hidden = true;
-		$("new_email_address").hidden = true;
-		$("add_email_address").hidden = true;
-		$("remove_email_address").hidden = true;
-	}
+    var checkStatus = gel("input_ws1_email_val").checked;
+
+    jslog("check status is " + checkStatus);
+
+    if (checkStatus == true) {
+        gel("WS1UEMExceptionListSubtext").innerHTML = getMessage("WS1UEMEmailValidationIgnore");
+        gel("email_exception_table").style.display = "block";
+        $("section_title").hidden = false;
+        $("WS1UEMExceptionListSubtext").hidden = false;
+        $("new_email_address").hidden = false;
+        $("add_email_address").hidden = false;
+        $("remove_email_address").hidden = false;
+
+    } else {
+        gel("WS1UEMExceptionListSubtext").innerHTML = getMessage("WS1UEMEmailValidationEnforce");
+        gel("email_exception_table").style.display = "none";
+        $("section_title").hidden = true;
+        $("WS1UEMExceptionListSubtext").hidden = true;
+        $("new_email_address").hidden = true;
+        $("add_email_address").hidden = true;
+        $("remove_email_address").hidden = true;
+    }
 }
 
 function addEmailToExceptionTable(emailAddress) {
-	var tr = document.createElement('tr');
-	var td = document.createElement('td');
-	var trId = "exception_" + emailAddress;
-	
-	td.innerHTML = emailAddress;
-	td.classList.add("table-cell");
-	
-	tr.appendChild(td);
-	tr.classList.add("table-row");
-	tr.id = trId;
-	tr.onclick = function() {
-		if (gel("selected_email").value === emailAddress) {
-			clearSelectedEmail();
-			clearExceptionTableHighlighting();
-			return;
-		}
-		
-		gel("selected_email").value = emailAddress;
-		gel("new_email_address").value = emailAddress;
-		gel("remove_email_address").disabled = undefined;
-		
-		// highlight this row and clear highlighting from other rows
-		clearExceptionTableHighlighting();
-		gel(trId).classList.add("table-row-selected");
-	};
-	gel("email_exception_table").appendChild(tr);
+    var tr = document.createElement('tr');
+    var td = document.createElement('td');
+    var trId = "exception_" + emailAddress;
+
+    td.innerHTML = emailAddress;
+    td.classList.add("table-cell");
+
+    tr.appendChild(td);
+    tr.classList.add("table-row");
+    tr.id = trId;
+    tr.onclick = function() {
+        if (gel("new_email_address").value === emailAddress) {
+            clearSelectedEmail();
+            clearExceptionTableHighlighting();
+            return;
+        }
+
+        gel("new_email_address").value = emailAddress;
+        gel("remove_email_address").disabled = undefined;
+
+        // highlight this row and clear highlighting from other rows
+        clearExceptionTableHighlighting();
+        gel(trId).classList.add("table-row-selected");
+    };
+    gel("email_exception_body").appendChild(tr);
 }
 
 function clearExceptionTableHighlighting() {
-	var tableRows = gel(email_exception_table).children;
-	for (var i = 0; i < tableRows.length; i++) {
-		tableRows[i].classList.remove("table-row-selected");
-	}
+    var tableRows = gel("email_exception_body").children;
+    for (var i = 0; i < tableRows.length; i++) {
+        tableRows[i].classList.remove("table-row-selected");
+    }
 }
 
 function removeEmailFromExceptionTable() {
-	var emailAddress = gel("selected_email").value;
+    var emailAddress = gel("new_email_address").value;
 	
-	if (!emailAddress) {
-		jslog("no email address");
-		return;
-	}
-	
-	gel("new_email_address").value = "";
-	
-	
-	jslog("Removing address: " + emailAddress);
-	var tableRowId = "exception_" + emailAddress;
+    if (!emailAddress) {
+        jslog("no email address");
+        return;
+    }
+
+    gel("new_email_address").value = "";
+
+    jslog("Removing address: " + emailAddress);
+    var tableRowId = "exception_" + emailAddress;
 	var tableRow = document.getElementById(tableRowId);
-	tableRow.remove();
-	
-	clearSelectedEmail();
-	
-	var current_jvar_val = gel("jvar_new_email_list").value;
-	var current_json = JSON.parse(current_jvar_val);
-	var pos = -1;
-	for (var i=0; i < current_json.length; i++) {
-      if (current_json[i] === emailAddress) {
-			pos = i;
-			break;
-      }
+    if (tableRow) {
+		tableRow.remove();
+	} else {
+        alert(getMessage("WS1UEMEmailValidationMissing"));
 	}
-	
-	jslog("selected email index " + pos);
-	
-// 	var current_selected_email = gel("email_exception_list").value;
-// 	var current_selected_index = gel("email_exception_list").selectedIndex;
-	
-	if (pos != -1) {
-		delete current_json[pos];
-	}
-	
-	gel("jvar_remove_email").value = emailAddress;
-	gel("jvar_new_email_list").value = JSON.stringify(current_json);
-	
-// 	jslog("email removed " + current_selected_email);
-// 	jslog("index removed " + current_selected_index);
-	//gel("email_exception_list").options[current_selected_index].remove();
+
+    clearSelectedEmail();
+
+    var current_jvar_val = gel("jvar_new_email_list").value;
+    var current_json = JSON.parse(current_jvar_val);
+    var pos = -1;
+    for (var i = 0; i < current_json.length; i++) {
+        if (current_json[i] === emailAddress) {
+            pos = i;
+            break;
+        }
+    }
+
+    jslog("selected email index " + pos);
+
+    if (pos != -1) {
+        delete current_json[pos];
+    }
+
+    gel("jvar_remove_email").value = emailAddress;
+    gel("jvar_new_email_list").value = JSON.stringify(current_json);
 }
 
 function clearSelectedEmail() {
-	gel("selected_email").value = "";
-	gel("remove_email_address").disabled = true;
+	gel("new_email_address").value = "";
+    gel("remove_email_address").disabled = true;
 }
 
 // update system parameter when the checkbox changes state.
 function updateDetails() {
-	
-	if ($("input_ws1_note").checked == true) {
+
+    if ($("input_ws1_note").checked == true) {
         gel("jvar_checkedstatus").value = "true";
-    } 
-	else {
+    } else {
         gel("jvar_checkedstatus").value = "false";
     }
-	
-	if ($("input_ws1_email_val").checked == true) {
-		gel("jvar_email_check").value = "true";
-	} else {
-		gel("jvar_email_check").value = "false";
-	}
+
+    if ($("input_ws1_email_val").checked == true) {
+        gel("jvar_email_check").value = "true";
+    } else {
+        gel("jvar_email_check").value = "false";
+    }
 }
 
 function addEmailAddresses() {
-	var newEmailInputElement = gel("new_email_address");
-	var email_value = newEmailInputElement.value;
-	
-	var current_jvar_val = gel("jvar_new_email_list").value;
-	jslog("current jvar val " + current_jvar_val);
-	var current_json = JSON.parse(current_jvar_val);
-	
-	var emails = email_value.split(";");
-	
-	for (var pos = 0; pos < emails.length; pos++) {
-		email = emails[pos];
-		
-		jslog("processing email " + email);
-		var isEmailValid = validateEmail(email);
-		if (!isEmailValid) {
-			jslog(getMessage("WS1UEMEmailValidationErrorInvalidFormat"));
+    var newEmailInputElement = gel("new_email_address");
+    var email_value = newEmailInputElement.value;
 
-			alert(getMessage("WS1UEMEmailValidationErrorInvalidFormat"));
-			$("new_email_address").value = "";
-			return;
-		}
-		
-		if (current_jvar_val.includes(email)) {
-			jslog(getMessage("WS1UEMEmailValidationErrorDuplicate"));
+    var current_jvar_val = gel("jvar_new_email_list").value;
+    jslog("current jvar val " + current_jvar_val);
+    var current_json = JSON.parse(current_jvar_val);
 
-			alert(getMessage("WS1UEMEmailValidationErrorDuplicate"));
-			$("new_email_address").value = "";
-			return;
-		}
-	
-		addEmailToExceptionTable(email);
-		newEmailInputElement.value = '';
+    var emails = email_value.split(";");
 
-		var new_email = $("new_email_address").value;
-		jslog("new email " + email);	
-		current_json.push(email);
-		jslog("current json nval " + current_json);
-	}
-	
-	gel("jvar_new_email_list").value = JSON.stringify(current_json);
-	jslog("email value " + gel("jvar_new_email_list").value);	
+    for (var pos = 0; pos < emails.length; pos++) {
+        email = emails[pos];
+
+        jslog("processing email " + email);
+        var isEmailValid = validateEmail(email);
+        if (!isEmailValid) {
+            jslog(getMessage("WS1UEMEmailValidationErrorInvalidFormat"));
+
+            alert(getMessage("WS1UEMEmailValidationErrorInvalidFormat"));
+            $("new_email_address").value = "";
+            return;
+        }
+
+        if (current_jvar_val.includes(email)) {
+            jslog(getMessage("WS1UEMEmailValidationErrorDuplicate"));
+
+            alert(getMessage("WS1UEMEmailValidationErrorDuplicate"));
+            $("new_email_address").value = "";
+            return;
+        }
+
+        addEmailToExceptionTable(email);
+        newEmailInputElement.value = '';
+
+        var new_email = $("new_email_address").value;
+        jslog("new email " + email);
+        current_json.push(email);
+        jslog("current json nval " + current_json);
+    }
+
+    gel("jvar_new_email_list").value = JSON.stringify(current_json);
+    jslog("email value " + gel("jvar_new_email_list").value);
 }
 
 function addEmailAddress() {
-	var newEmailInputElement = gel("new_email_address");
-	var email_value = newEmailInputElement.value;
-	var isEmailValid = validateEmail(email_value);
-	
-	if (!isEmailValid) {
-		jslog("Skip adding invalid email value");
-		
-		alert("Email address format is invalid");
-		$("new_email_address").value = "";
-		return;
-	}
-	
-	var current_email_list = gel("jvar_new_email_list").value;
-	jslog("current email list " + current_email_list);
-	if (current_email_list.includes(email_value)) {
-		jslog("Skip adding duplicate email value");
-		
-		alert("Email address already exists in list");
-		$("new_email_address").value = "";
-		return;
-	}
-	
-	gel("jvar_new_email").value = email_value;
-	
-	addEmailToExceptionTable(email_value);
-	newEmailInputElement.value = '';
-	
-	var current_jvar_val = gel("jvar_new_email_list").value;
-	jslog("current jvar val " + current_jvar_val);
-	var current_json = JSON.parse(current_jvar_val);
+    var newEmailInputElement = gel("new_email_address");
+    var email_value = newEmailInputElement.value;
+    var isEmailValid = validateEmail(email_value);
 
-	var new_email = $("new_email_address").value;
-  	jslog("new email " + new_email);	
-	current_json.push(email_value);
-	
-	gel("jvar_new_email_list").value = JSON.stringify(current_json);
-	jslog("email value " + gel("jvar_new_email_list").value);
+    if (!isEmailValid) {
+        jslog("Skip adding invalid email value");
+
+        alert(getMessage("WS1UEMEmailValidationErrorInvalidFormat"));
+        $("new_email_address").value = "";
+        return;
+    }
+
+    var current_email_list = gel("jvar_new_email_list").value;
+    jslog("current email list " + current_email_list);
+    if (current_email_list.includes(email_value)) {
+        jslog("Skip adding duplicate email value");
+
+		alert(getMessage("WS1UEMEmailValidationErrorDuplicate"));
+        $("new_email_address").value = "";
+        return;
+    }
+
+    gel("jvar_new_email").value = email_value;
+
+    addEmailToExceptionTable(email_value);
+    newEmailInputElement.value = '';
+
+    var current_jvar_val = gel("jvar_new_email_list").value;
+    jslog("current jvar val " + current_jvar_val);
+    var current_json = JSON.parse(current_jvar_val);
+
+    var new_email = $("new_email_address").value;
+    jslog("new email " + new_email);
+    current_json.push(email_value);
+
+    gel("jvar_new_email_list").value = JSON.stringify(current_json);
+    jslog("email value " + gel("jvar_new_email_list").value);
 }
 
 function validateEmail(email) {
-	return String(email)
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
+    return String(email)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
 }]]></client_script>
         <description>Configuration validation page</description>
         <direct>false</direct>
@@ -321,8 +321,37 @@ function validateEmail(email) {
 			text-align: center;
 		}
 		
-		.table-cell {
-			border: 1px solid black;
+		.exceptions-table {
+			display: block;
+			margin: 1rem 0;
+			table-layout: fixed;
+			word-break: break-word;
+			min-width: 200px;
+			max-width: 400px;
+		}
+		
+		.table-heading {
+			display: block;
+		}
+		
+		.table-heading-row {
+			border-bottom: 2px solid #ddd;
+			display: block;
+		}
+		
+		.table-body {
+			display: block;
+			overflow-y: auto;
+			max-height: 300px;
+		}
+		
+		.table-row {
+			border-bottom: 1px solid #ddd;
+			display: block;
+		}
+		
+		.table-row:last-child {
+			border-bottom: 0;
 		}
 		
 		.table-row:hover {
@@ -334,8 +363,13 @@ function validateEmail(email) {
 			background-color: #dedede;
 		}
 		
-		.exceptions-table {
-			margin: auto
+		.table-cell {
+			padding: 0.5rem;
+		}
+		
+		.input-text {
+			margin-right: 5px;
+			padding: 6px 9px;
 		}
 	</style>
 		
@@ -397,30 +431,23 @@ function validateEmail(email) {
 			<div class="checkbox-cell left">
 				<span class="input-group-checkbox">
 				<form>
-					<table id="email_exception_table" class="exceptions-table" style="width:200px">
-						<tr>
-							<th class="table-cell">${gs.getMessage('WS1UEMEmailAddress')}</th>
-						</tr>
+					<table id="email_exception_table" class="exceptions-table">
+						<thead class="table-heading">
+							<tr class="table-heading-row">
+								<th class="table-cell">${gs.getMessage('WS1UEMEmailAddress')}</th>
+							</tr>
+						</thead>
+						<tbody id="email_exception_body" class="table-body">
+						</tbody>
 					</table>
-					<input type="email" id="new_email_address" name="new_email_address" onkeydown="onTextChanged"></input>
-					<input 
-						   type="button" 
-						   id="add_email_address" 
-						   name="add_email_address" 
-						   onclick="addEmailAddresses()" 
-						   value="${gs.getMessage('WS1UEMAdd')}">
-					</input>
-					
-					
+					<input type="text" id="new_email_address" name="new_email_address" class="input-text" onkeyup="onTextChanged(this);"></input>
+					<button type="button" id="add_email_address" name="add_email_address" onclick="addEmailAddresses()" disabled="true">
+						${gs.getMessage('WS1UEMAdd')}
+					</button>
 					<input style="display: none" type="text" id="selected_email" name="selected email"></input>
-					<input 
-						   type="button" 
-						   id="remove_email_address" 
-						   name="remove_email_address" 
-						   onclick="removeEmailFromExceptionTable()"
-						   value="${gs.getMessage('WS1UEMRemove')}"
-						   disabled="true">
-					</input>
+					<button type="button" id="remove_email_address" name="remove_email_address" onclick="removeEmailFromExceptionTable()" disabled="true">
+						${gs.getMessage('WS1UEMRemove')}
+					</button>
 
 					<br></br>
 				</form>
@@ -436,7 +463,7 @@ function validateEmail(email) {
 		</div>
 
 		
-		<div class="button-wrapper" id="div_ws1_email_val" >
+		<div id="div_ws1_email_val" >
 			<g:form_label>
 				<button type="submit" onclick="updateDetails()">
 					${gs.getMessage('save')}
@@ -448,14 +475,12 @@ function validateEmail(email) {
 	</g:ui_form>
 </j:jelly>]]></html>
         <name>WS1UEMCMDBIntegration</name>
-        <processing_script><![CDATA[gs.info("SNOW > Entering processing script ");
-
-var action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
+        <processing_script><![CDATA[var action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
 action_table.addQuery('name', "WS1UEMAddNote");
 action_table.query();
 action_table.next();
 
-// update if value has changed
+// update if add note value has changed
 if (action_table.value != jvar_checkedstatus) {
 
     if (jvar_checkedstatus == "true") {
@@ -472,7 +497,7 @@ action_table.addQuery('name', "WS1UEMEmailValidationCheck");
 action_table.query();
 action_table.next();
 
-// update if value has changed
+// update if validate email value has changed
 if (action_table.value != jvar_email_check) {
 
     if (jvar_email_check == "true") {
@@ -484,115 +509,55 @@ if (action_table.value != jvar_email_check) {
     action_table.update();
 }
 
-gs.info("SNOW > current value " + jvar_new_email_list);
-var email_list = JSON.parse(jvar_new_email_list);
+// only process the email exceptions if the exception check box is checked.
+if (jvar_email_check == "true") {
+    var email_list = JSON.parse(jvar_new_email_list);
 
-gs.info("SNOW > current value " + email_list);
-
-
-// iterate through the existing email addresses in the config table and check against the email addresses in the UI list.
-action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
-action_table.addQuery('name', "WS1UEMExceptionEmail");
-action_table.query();
-// check each item using the config table as the iterator
-while (action_table.next()) {
-    // Check if the email address is not in the UI list
-    if (!jvar_new_email_list.includes(action_table.value)) {
-        // email address is not found so need to remove it from the table
-        gs.info("SNOW > email address removed " + action_table.value);
-        action_table.deleteRecord();
-        action_table.update();
-    } else {
-        // emails match so remove email address from the UI list
-        gs.info("SNOW > email address match " + action_table.value);
-        for (var j = 0; j < email_list.length; j++) {
-            if (email_list[j] == action_table.value) {
-				delete email_list[j];
+    // iterate through the existing email addresses in the config table and check against the email addresses in the UI list.
+    action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
+    action_table.addQuery('name', "WS1UEMExceptionEmail");
+    action_table.query();
+    // check each item using the config table as the iterator
+    while (action_table.next()) {
+        // Check if the email address is not in the UI list
+        if (!jvar_new_email_list.includes(action_table.value)) {
+            // email address is not found so need to remove it from the table
+            action_table.deleteRecord();
+            action_table.update();
+        } else {
+            // emails match so remove email address from the UI list
+            for (var j = 0; j < email_list.length; j++) {
+                if (email_list[j] == action_table.value) {
+                    delete email_list[j];
+                }
             }
         }
     }
-}
 
-gs.info("SNOW > current value after processing" + email_list);
-
-// iterate over the UI list of email addresses
-for (var i = 0; i < email_list.length; i++) {
-	// The only items left in the UI list that are not null are new email addresses
-	if (email_list[i]) {
-		// add email address to the config table
-		gs.info("SNOW > email address added " + email_list[i] + " i = " + i);
-		action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
-        action_table.initialize();
-        action_table.name = 'WS1UEMExceptionEmail';
-        action_table.value = email_list[i];
-        action_table.insert();
+    // iterate over the UI list of email addresses
+    for (var i = 0; i < email_list.length; i++) {
+        // The only items left in the UI list that are not null are new email addresses
+        if (email_list[i]) {
+            // add email address to the config table
+            action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
+            action_table.initialize();
+            action_table.name = 'WS1UEMExceptionEmail';
+            action_table.value = email_list[i];
+            action_table.insert();
+        }
     }
-}
-
-
-action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
-action_table.addQuery('name', "WS1UEMEmailExceptionList");
-action_table.query();
-action_table.next();
-
-gs.info("SNOW > current value " + jvar_new_email_list);
-if (action_table.value != jvar_new_email_list) {
-
-    if (jvar_new_email_list != "") {
-        action_table.value = jvar_new_email_list;
-    }
-
-    action_table.update();
-}
-
-/*
-
-action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
-action_table.initialize(); 
-action_table.name = 'WS1UEMExceptionEmail';  
-
-if (jvar_new_email != "") {
-	action_table.value = jvar_new_email;
-}
-
-action_table.insert();
-
-jvar_new_email = "";
-
-
-if (jvar_remove_email != "") {
-	action_table = new GlideRecordSecure('x_vmw_ws1uem_ws1uemappconfig');
-	action_table.addQuery('name', "WS1UEMExceptionEmail");
-	action_table.addQuery('value', jvar_remove_email);
-	action_table.query();
-	if (action_table.next()) {
-		action_table.deleteRecord();
-	}
-	
-	jvar_remove_email = "";
-}
-*/
-
-// var obj = new JSON().decode(current_value);
-// var obj_list = obj["list"];
-
-// if (jvar_new_email_list.value != "") {
-// 	obj_list.append(jvar_new_email_list.value);
-// 	obj["list"] = obj_list;
-
-//     action_table.update();
-// }]]></processing_script>
+}]]></processing_script>
         <sys_class_name>sys_ui_page</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-09-01 16:31:15</sys_created_on>
         <sys_id>c2d4530e1b1eb410a76c0dc0604bcb0c</sys_id>
-        <sys_mod_count>432</sys_mod_count>
+        <sys_mod_count>497</sys_mod_count>
         <sys_name>WS1UEMCMDBIntegration</sys_name>
         <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
         <sys_policy/>
         <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
         <sys_update_name>sys_ui_page_c2d4530e1b1eb410a76c0dc0604bcb0c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-06-07 21:38:42</sys_updated_on>
+        <sys_updated_on>2022-06-10 21:17:39</sys_updated_on>
     </sys_ui_page>
 </record_update>
