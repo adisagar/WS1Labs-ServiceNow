@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module">
+    <sys_app_module action="DELETE">
+        <active>true</active>
+        <application display_value="System Import Sets">import_sets</application>
+        <assessment/>
+        <device_type/>
+        <filter/>
+        <hint/>
+        <homepage/>
+        <image/>
+        <link_type>LIST</link_type>
+        <map_page/>
+        <mobile_title>SG-Workspace ONE UEM Devices and Apps</mobile_title>
+        <mobile_view_name>Mobile</mobile_view_name>
+        <name>sn_vmwoneuem_integ_devices_and_apps</name>
+        <order>1100</order>
+        <override_menu_roles>false</override_menu_roles>
+        <query/>
+        <report/>
+        <roles/>
+        <sys_class_name>sys_app_module</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-11-15 21:34:29</sys_created_on>
+        <sys_domain>global</sys_domain>
+        <sys_domain_path>/</sys_domain_path>
+        <sys_id>9789aa1e9777f450450f3f5bf253af75</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SG-Workspace ONE UEM Devices and Apps</sys_name>
+        <sys_overrides/>
+        <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
+        <sys_update_name>sys_app_module_9789aa1e9777f450450f3f5bf253af75</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-11-15 21:34:29</sys_updated_on>
+        <timeline_page/>
+        <title>SG-Workspace ONE UEM Devices and Apps</title>
+        <uncancelable>false</uncancelable>
+        <view_name/>
+        <window_name/>
+    </sys_app_module>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</application>
+        <file_path/>
+        <instance_id>7f877cdedb2674108aea21c40596195a</instance_id>
+        <instance_name>ven04953</instance_name>
+        <name>sys_app_module_9789aa1e9777f450450f3f5bf253af75</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_app_module"><sys_app_module action="INSERT_OR_UPDATE"><active>true</active><application display_value="System Import Sets">import_sets</application><assessment/><device_type/><filter/><hint/><homepage/><image/><link_type>LIST</link_type><map_page/><mobile_title>SG-Workspace ONE UEM Devices and Apps</mobile_title><mobile_view_name>Mobile</mobile_view_name><name>sn_vmwoneuem_integ_devices_and_apps</name><order>1100</order><override_menu_roles>false</override_menu_roles><query/><report/><roles/><sys_class_name>sys_app_module</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2021-11-15 21:34:29</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>9789aa1e9777f450450f3f5bf253af75</sys_id><sys_mod_count>0</sys_mod_count><sys_name>SG-Workspace ONE UEM Devices and Apps</sys_name><sys_overrides/><sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package><sys_policy/><sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope><sys_update_name>sys_app_module_9789aa1e9777f450450f3f5bf253af75</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2021-11-15 21:34:29</sys_updated_on><timeline_page/><title>SG-Workspace ONE UEM Devices and Apps</title><uncancelable>false</uncancelable><view_name/><window_name/></sys_app_module></record_update>]]></payload>
+        <payload_hash>-1052794868</payload_hash>
+        <record_name>SG-Workspace ONE UEM Devices and Apps</record_name>
+        <reverted_from/>
+        <source>7e15d2c8973f7050450f3f5bf253af4c</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-11-15 21:34:29</sys_created_on>
+        <sys_id>5f89aa1e9777f450450f3f5bf253af77</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>17d2585dc3d0000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-11-15 21:34:29</sys_updated_on>
+        <type>Module</type>
+        <update_guid>9789aa1e8e77f4508b2b36ef38d9ab77</update_guid>
+        <update_guid_history>9789aa1e8e77f4508b2b36ef38d9ab77:-1052794868</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="SG-Workspace ONE UEM Devices and Apps">f937b4e71bd45150bb8fa932604bcbb2</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-07-01 03:09:54</sys_created_on>
+        <sys_db_object display_value="" name="sys_app_module">sys_app_module</sys_db_object>
+        <sys_id>2abafc1e15bc4a409c13329bce400400</sys_id>
+        <sys_metadata>9789aa1e9777f450450f3f5bf253af75</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>SG-Workspace ONE UEM Devices and Apps</sys_name>
+        <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
+        <sys_scope_delete display_value="">2bd102985c8c4d3c9247af612a7bd3a4</sys_scope_delete>
+        <sys_update_name>sys_app_module_9789aa1e9777f450450f3f5bf253af75</sys_update_name>
+        <sys_update_version display_value="sys_app_module_9789aa1e9777f450450f3f5bf253af75">5f89aa1e9777f450450f3f5bf253af77</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-07-01 03:09:54</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
