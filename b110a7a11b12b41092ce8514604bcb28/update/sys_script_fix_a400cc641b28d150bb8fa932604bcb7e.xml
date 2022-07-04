@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_fix">
+    <sys_script_fix action="INSERT_OR_UPDATE">
+        <before>false</before>
+        <description>Run post install</description>
+        <name>WS1UEMUpdate</name>
+        <record_for_rollback>false</record_for_rollback>
+        <script><![CDATA[gs.info("WS1UEM - update script");]]></script>
+        <sys_class_name>sys_script_fix</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2022-07-04 01:45:06</sys_created_on>
+        <sys_id>a400cc641b28d150bb8fa932604bcb7e</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>WS1UEMUpdate</sys_name>
+        <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
+        <sys_update_name>sys_script_fix_a400cc641b28d150bb8fa932604bcb7e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2022-07-04 01:46:11</sys_updated_on>
+        <unloadable>false</unloadable>
+    </sys_script_fix>
+</record_update>
