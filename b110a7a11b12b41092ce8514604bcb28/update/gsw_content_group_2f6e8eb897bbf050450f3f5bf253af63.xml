@@ -10,15 +10,15 @@
         <description><![CDATA[<p>Assign VMware Workspace ONE ITSM Connector roles to Groups and Users.</p>
 <p>The application has multiple roles that can be assigned;</p>
 <p><strong>WS1UEMStandard</strong></p>
-<p>This role contains all the basic actions that an ITSM agent can perform on devices.</p>
+<p>This role contains all the basic actions that an ITSM agent can perform on devices. These include Change Passcode, Lock Device, Remote Assist, Request Logs, Send Message, Soft Reset and Sync Device. <br /></p>
 <p><strong>WS1UEMAdvanced</strong></p>
 <p>This role contains all the actions included with the <strong>WS1UEMStandard</strong> role along with Device and Enterprise wipe actions. </p>
 <p><strong>WS1UEMConsoleViewer</strong></p>
 <p>This role enables a button on the Incident form allowing the ITSM agent to open a Workspace ONE UEM Console window. This role is independent of the <strong>WS1UEMStandard </strong>and <strong>WS1UEMAdvanced </strong>roles.</p>
-<p><br /></p>
 <h2 id="DocumentationforVMwareWorkspaceONEITSMConnector-Enhancedroles">Enhanced roles</h2>
 <p>To provide additional flexibly individual actions can also be assigned to users and groups. The <strong>WS1UEMStandard</strong> and <strong>WS1UEMAdvanced</strong> roles provide the default set of action detailed above, but each action has its own associated role which can be individually managed.</p>
-<table style="border-collapse: collapse; width: 79.8903%; height: 161px;" border="1"><tbody><tr style="height: 13px;"><td style="width: 50%; height: 13px;"><strong>Action</strong></td><td style="width: 50%; height: 13px;"><strong>Role</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Change Passcode</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemchangepasscode</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Lock Device</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemlockdevice</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Remote Assist</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemremoteassist</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Request Logs</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemdevicelogs</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Send Message</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemsendmessage</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Soft Reset</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemsoftreset</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Sync Device</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemsyncdevice</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Device Wipe</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uemdevicewipe</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;">Enterprise Wipe</td><td style="width: 50%; height: 13px;"><strong>x_vmw_ws1uem.ws1uementerprisewipe</strong></td></tr></tbody></table>
+<p>Below are the details of each role that can be assigned to a User or User Group.</p>
+<table style="border-collapse: collapse; width: 79.8903%; height: 130px;" border="1"><tbody><tr style="height: 13px;"><td style="width: 50%; height: 13px;"><strong> Action</strong></td><td style="width: 50%; height: 13px;"><strong> Enhanced Roles</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Change Passcode</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemchangepasscode</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Lock Device</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemlockdevice</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Remote Assist</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemremoteassist</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Request Logs</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemdevicelogs</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Send Message</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemsendmessage</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Soft Reset</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemsoftreset</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Sync Device</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemsyncdevice</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Device Wipe</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uemdevicewipe</strong></td></tr><tr style="height: 13px;"><td style="width: 50%; height: 13px;"> Enterprise Wipe</td><td style="width: 50%; height: 13px;"><strong> x_vmw_ws1uem.ws1uementerprisewipe</strong></td></tr><tr><td style="width: 50%;"> WS1UEMStandard<br /></td><td style="width: 50%;"><strong> x_vmw_ws1uem.ws1uemstandard</strong></td></tr><tr><td style="width: 50%;"> WS1UEMAdvanced<br /></td><td style="width: 50%;"><strong>  x_vmw_ws1uem.ws1uemadvanced<br /></strong></td></tr><tr><td style="width: 50%;"> WS1UEMConsoleViewer<br /></td><td style="width: 50%;"><strong>  x_vmw_ws1uem.ws1uemconsoleviewer<br /></strong></td></tr></tbody></table>
 <div><br /></div>
 <p><br /></p>]]></description>
         <display_child_max_num/>
@@ -41,14 +41,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-11-11 03:46:32</sys_created_on>
         <sys_id>2f6e8eb897bbf050450f3f5bf253af63</sys_id>
-        <sys_mod_count>14</sys_mod_count>
+        <sys_mod_count>17</sys_mod_count>
         <sys_name>Assign Roles</sys_name>
         <sys_package display_value="VMware Workspace ONE ITSM Connector" source="x_vmw_ws1uem">b110a7a11b12b41092ce8514604bcb28</sys_package>
         <sys_policy/>
         <sys_scope display_value="VMware Workspace ONE ITSM Connector">b110a7a11b12b41092ce8514604bcb28</sys_scope>
         <sys_update_name>gsw_content_group_2f6e8eb897bbf050450f3f5bf253af63</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-06-21 03:49:01</sys_updated_on>
+        <sys_updated_on>2022-07-11 22:22:31</sys_updated_on>
         <title>Assign Roles</title>
         <weight>1</weight>
     </gsw_content_group>
