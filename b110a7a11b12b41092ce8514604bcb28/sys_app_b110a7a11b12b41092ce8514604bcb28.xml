@@ -22,23 +22,23 @@
         <scoped_administration>false</scoped_administration>
         <short_description>VMware Workspace ONE ITSM Connector</short_description>
         <source>x_vmw_ws1uem</source>
-        <store_correlation_id>REPOAPP0000612014</store_correlation_id>
+        <store_correlation_id>REPOAPP0000617989</store_correlation_id>
         <store_url/>
         <sys_class_name>sys_app</sys_class_name>
         <sys_code/>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2021-08-31 04:03:08</sys_created_on>
         <sys_id>b110a7a11b12b41092ce8514604bcb28</sys_id>
-        <sys_mod_count>196</sys_mod_count>
+        <sys_mod_count>199</sys_mod_count>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-07-04 03:03:30</sys_updated_on>
+        <sys_updated_on>2022-07-14 04:49:43</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <uninstall_blocked>false</uninstall_blocked>
         <user_role display_value="x_vmw_ws1uem.ws1uemuser" name="x_vmw_ws1uem.ws1uemuser">5a5fa3641b8b0510a206c840604bcb60</user_role>
         <vendor/>
         <vendor_prefix/>
-        <version>1.0.94</version>
+        <version>1.0.96</version>
     </sys_app>
     <sys_attachment action="INSERT_OR_UPDATE">
         <average_image_color/>
